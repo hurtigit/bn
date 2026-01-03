@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+const articleFiles = import.meta.glob('../../content/articles/*.md', { eager: true });
+
+const categoryLabels: Record<string, string> = {
+  'nyheter': 'Nyheter',
+  'sport': 'Sport',
+  'kultur': 'Kultur',
+  'naringsliv': 'Näringsliv',
+  'kommun': 'Kommun',
+  'fritid': 'Fritid',
+  'omsorg': 'Omsorg',
+  'opinion': 'Opinion',
+};
+
+export async function getStaticPaths() {
+  const categories = ['nyheter', 'sport', 'kultur', 'naringsliv', 'kommun', 'fritid', 'omsorg', 'opinion'];
+  
+  return categories.map(category => ({
+    params: { category },
+    props: { category }
+  }));
+}
+
+const { category } = Astro.props;
+
+const articles = Object.entries(articleFiles)
+  .map(([path, article]: [string, any]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') || '';
+    return {
+      ...article.frontmatter,
+      slug
+    };
+  })
+  .filter(a => a.category === category)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+const categoryName = categoryLabels[category] || category;
+---
+
+<BaseLayout title={categoryName} description={`Artiklar i kategorin ${categoryName} från Bollebygdsnyheter`}>
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">{categoryName}</h1>
+      <p class="page-description">
+        Alla artiklar i kategorin {categoryName.toLowerCase()}
+      </p>
+    </header>
+    
+    {articles.length > 0 ? (
+      <div class="article-grid">
+        {articles.map(article => (
+          <ArticleCard
+            title={article.title}
+            excerpt={article.excerpt}
+            date={article.date}
+            category={article.category}
+            image={article.image}
+            imageAlt={article.imageAlt}
+            slug={article.slug}
+          />
+        ))}
+      </div>
+    ) : (
+      <div style="text-align: center; padding: 3rem; color: var(--color-text-muted);">
+        <p>Inga artiklar i denna kategori än.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
