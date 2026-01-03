@@ -22,29 +22,29 @@ const currentPath = Astro.url.pathname;
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/bollebygdsnyheter/favicon.svg">
-  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
   <!-- Styles -->
-  <link rel="stylesheet" href="/bollebygdsnyheter/styles/global.css">
+  <link rel="stylesheet" href="/styles/global.css">
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="/bollebygdsnyheter/" class="site-logo">
+      <a href="/" class="site-logo">
         <div class="logo-mark">B</div>
         <div class="logo-text">
           <span class="logo-title">Bollebygdsnyheter</span>
           <span class="logo-tagline">Lokala nyheter sedan 1986</span>
         </div>
       </a>
-      
+
       <nav class="main-nav">
-        <a href="/bollebygdsnyheter/" class:list={["nav-link", { active: currentPath === "/bollebygdsnyheter/" }]}>Hem</a>
-        <a href="/bollebygdsnyheter/arkiv/" class:list={["nav-link", { active: currentPath.includes("/arkiv") }]}>Arkiv</a>
-        <a href="/bollebygdsnyheter/kategori/sport/" class:list={["nav-link", { active: currentPath.includes("/sport") }]}>Sport</a>
-        <a href="/bollebygdsnyheter/kategori/kultur/" class:list={["nav-link", { active: currentPath.includes("/kultur") }]}>Kultur</a>
-        <a href="/bollebygdsnyheter/om-oss/" class:list={["nav-link", { active: currentPath.includes("/om-oss") }]}>Om oss</a>
+        <a href="/" class:list={["nav-link", { active: currentPath === "/" || currentPath === "/bn/" }]}>Hem</a>
+        <a href="/arkiv/" class:list={["nav-link", { active: currentPath.includes("/arkiv") }]}>Arkiv</a>
+        <a href="/kategori/sport/" class:list={["nav-link", { active: currentPath.includes("/sport") }]}>Sport</a>
+        <a href="/kategori/kultur/" class:list={["nav-link", { active: currentPath.includes("/kultur") }]}>Kultur</a>
+        <a href="/om-oss/" class:list={["nav-link", { active: currentPath.includes("/om-oss") }]}>Om oss</a>
       </nav>
       
       <!-- Search -->
@@ -71,11 +71,11 @@ const currentPath = Astro.url.pathname;
     </div>
     
     <nav class="mobile-nav" id="mobile-nav">
-      <a href="/bollebygdsnyheter/" class="nav-link">Hem</a>
-      <a href="/bollebygdsnyheter/arkiv/" class="nav-link">Arkiv</a>
-      <a href="/bollebygdsnyheter/kategori/sport/" class="nav-link">Sport</a>
-      <a href="/bollebygdsnyheter/kategori/kultur/" class="nav-link">Kultur</a>
-      <a href="/bollebygdsnyheter/om-oss/" class="nav-link">Om oss</a>
+      <a href="/" class="nav-link">Hem</a>
+      <a href="/arkiv/" class="nav-link">Arkiv</a>
+      <a href="/kategori/sport/" class="nav-link">Sport</a>
+      <a href="/kategori/kultur/" class="nav-link">Kultur</a>
+      <a href="/om-oss/" class="nav-link">Om oss</a>
     </nav>
   </header>
 
@@ -96,10 +96,10 @@ const currentPath = Astro.url.pathname;
         <nav class="footer-nav">
           <h3>Kategorier</h3>
           <ul>
-            <li><a href="/bollebygdsnyheter/kategori/nyheter/">Nyheter</a></li>
-            <li><a href="/bollebygdsnyheter/kategori/sport/">Sport</a></li>
-            <li><a href="/bollebygdsnyheter/kategori/kultur/">Kultur</a></li>
-            <li><a href="/bollebygdsnyheter/kategori/naringsliv/">Näringsliv</a></li>
+            <li><a href="/kategori/nyheter/">Nyheter</a></li>
+            <li><a href="/kategori/sport/">Sport</a></li>
+            <li><a href="/kategori/kultur/">Kultur</a></li>
+            <li><a href="/kategori/naringsliv/">Näringsliv</a></li>
           </ul>
         </nav>
         
@@ -134,7 +134,7 @@ const currentPath = Astro.url.pathname;
     // Load articles for search
     async function loadArticles() {
       try {
-        const response = await fetch('/bollebygdsnyheter/search-index.json');
+        const response = await fetch('/search-index.json');
         articles = await response.json();
       } catch (e) {
         console.log('Search index not available');

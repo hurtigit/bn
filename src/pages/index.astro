@@ -45,7 +45,7 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', 
   <div class="container">
     <!-- Hero / Featured Article -->
     <section class="hero" style="padding-top: var(--space-xl);">
-      <a href={`/bollebygdsnyheter/artikel/${featuredArticle.slug}/`} class="featured-article">
+      <a href={`/artikel/${featuredArticle.slug}/`} class="featured-article">
         <img 
           src={featuredArticle.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=600&fit=crop'} 
           alt={featuredArticle.imageAlt || featuredArticle.title}
@@ -74,7 +74,7 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', 
     <section>
       <div class="section-header">
         <h2 class="section-title">Senaste nyheterna</h2>
-        <a href="/bollebygdsnyheter/arkiv/" class="section-link">
+        <a href="/arkiv/" class="section-link">
           Visa alla
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 18l6-6-6-6"/>
