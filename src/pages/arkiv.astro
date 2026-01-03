@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Get all articles
+const articleFiles = import.meta.glob('../content/articles/*.md', { eager: true });
+
+const articles = Object.entries(articleFiles).map(([path, article]: [string, any]) => {
+  const slug = path.split('/').pop()?.replace('.md', '') || '';
+  return {
+    ...article.frontmatter,
+    slug
+  };
+}).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+// Get unique categories
+const categories = [...new Set(articles.map(a => a.category).filter(Boolean))];
+
+const categoryLabels: Record<string, string> = {
+  'nyheter': 'Nyheter',
+  'sport': 'Sport',
+  'kultur': 'Kultur',
+  'naringsliv': 'Näringsliv',
+  'kommun': 'Kommun',
+  'fritid': 'Fritid',
+  'omsorg': 'Omsorg',
+  'opinion': 'Opinion',
+};
+
+const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<BaseLayout title="Arkiv" description="Sök och bläddra bland alla artiklar från Bollebygdsnyheter">
+  <div class="container">
+    <header class="page-header">
+      <h1 class="page-title">Artikelarkiv</h1>
+      <p class="page-description">
+        Sök och bläddra bland alla våra artiklar. Använd filtren för att hitta det du letar efter.
+      </p>
+    </header>
+    
+    <!-- Search -->
+    <div class="archive-search">
+      <div class="search-container" style="position: relative;">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="search" 
+          class="search-input" 
+          placeholder="Sök bland alla artiklar..."
+          id="archive-search"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+    
+    <!-- Category filters -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-category="all">Alla</button>
+      {categories.map(cat => (
+        <button class="filter-btn" data-category={cat}>
+          {categoryLabels[cat as string] || cat}
+        </button>
+      ))}
+    </div>
+    
+    <!-- Article list -->
+    <div class="article-list" id="article-list">
+      {articles.map(article => (
+        <article class="article-list-item" data-category={article.category} data-title={article.title.toLowerCase()} data-excerpt={(article.excerpt || '').toLowerCase()}>
+          {article.image && (
+            <a href={`/bollebygdsnyheter/artikel/${article.slug}/`} class="article-list-image">
+              <img src={article.image} alt={article.imageAlt || article.title} loading="lazy" />
+            </a>
+          )}
+          <div class="article-list-content">
+            {article.category && (
+              <span class="category-badge" data-category={article.category}>
+                {categoryLabels[article.category] || article.category}
+              </span>
+            )}
+            <h3 class="article-card-title">
+              <a href={`/bollebygdsnyheter/artikel/${article.slug}/`}>{article.title}</a>
+            </h3>
+            {article.excerpt && (
+              <p class="article-card-excerpt">{article.excerpt}</p>
+            )}
+            <div class="article-card-meta">
+              <time datetime={article.date}>{formatDate(article.date)}</time>
+              {article.author && <span> • {article.author}</span>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    
+    <div id="no-results" style="display: none; text-align: center; padding: 3rem; color: var(--color-text-muted);">
+      <p>Inga artiklar matchade din sökning.</p>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Filter functionality
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const articleItems = document.querySelectorAll('.article-list-item');
+  const searchInput = document.getElementById('archive-search') as HTMLInputElement;
+  const noResults = document.getElementById('no-results');
+  
+  let currentCategory = 'all';
+  let currentSearch = '';
+  
+  function filterArticles() {
+    let visibleCount = 0;
+    
+    articleItems.forEach(item => {
+      const el = item as HTMLElement;
+      const category = el.dataset.category || '';
+      const title = el.dataset.title || '';
+      const excerpt = el.dataset.excerpt || '';
+      
+      const matchesCategory = currentCategory === 'all' || category === currentCategory;
+      const matchesSearch = currentSearch === '' || 
+        title.includes(currentSearch) || 
+        excerpt.includes(currentSearch);
+      
+      if (matchesCategory && matchesSearch) {
+        el.style.display = '';
+        visibleCount++;
+      } else {
+        el.style.display = 'none';
+      }
+    });
+    
+    if (noResults) {
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  }
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = (btn as HTMLElement).dataset.category || 'all';
+      filterArticles();
+    });
+  });
+  
+  searchInput?.addEventListener('input', (e) => {
+    currentSearch = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    filterArticles();
+  });
+</script>
+
+<style>
+  .archive-search {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .archive-search .search-input {
+    width: 100%;
+    max-width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    padding-left: 3rem;
+    font-size: 1rem;
+  }
+  
+  .archive-search .search-icon {
+    left: var(--space-md);
+  }
+</style>

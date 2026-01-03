@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+
+// Get all articles and sort by date
+const allArticles = await Astro.glob('./artikel/**/*.astro');
+
+// For now, we'll use the markdown files directly
+import { getCollection } from 'astro:content';
+
+// Since we're not using content collections yet, let's manually import articles
+const articleFiles = import.meta.glob('../content/articles/*.md', { eager: true });
+
+const articles = Object.entries(articleFiles).map(([path, article]: [string, any]) => {
+  const slug = path.split('/').pop()?.replace('.md', '') || '';
+  return {
+    ...article.frontmatter,
+    slug,
+    content: article.default
+  };
+}).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+const featuredArticle = articles.find(a => a.featured) || articles[0];
+const otherArticles = articles.filter(a => a.slug !== featuredArticle.slug).slice(0, 6);
+
+const categoryLabels: Record<string, string> = {
+  'nyheter': 'Nyheter',
+  'sport': 'Sport',
+  'kultur': 'Kultur',
+  'naringsliv': 'Näringsliv',
+  'kommun': 'Kommun',
+  'fritid': 'Fritid',
+  'omsorg': 'Omsorg',
+  'opinion': 'Opinion',
+};
+
+const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<BaseLayout title="Startsida">
+  <div class="container">
+    <!-- Hero / Featured Article -->
+    <section class="hero" style="padding-top: var(--space-xl);">
+      <a href={`/bollebygdsnyheter/artikel/${featuredArticle.slug}/`} class="featured-article">
+        <img 
+          src={featuredArticle.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=600&fit=crop'} 
+          alt={featuredArticle.imageAlt || featuredArticle.title}
+          class="featured-image"
+        />
+        <div class="featured-overlay"></div>
+        <div class="featured-content">
+          {featuredArticle.category && (
+            <span class="category-badge" data-category={featuredArticle.category}>
+              {categoryLabels[featuredArticle.category] || featuredArticle.category}
+            </span>
+          )}
+          <h2 class="featured-title">{featuredArticle.title}</h2>
+          {featuredArticle.excerpt && (
+            <p class="featured-excerpt">{featuredArticle.excerpt}</p>
+          )}
+          <div class="featured-meta">
+            <time datetime={featuredArticle.date}>{formatDate(featuredArticle.date)}</time>
+            {featuredArticle.author && <span>• {featuredArticle.author}</span>}
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <!-- Latest Articles -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Senaste nyheterna</h2>
+        <a href="/bollebygdsnyheter/arkiv/" class="section-link">
+          Visa alla
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </a>
+      </div>
+      
+      <div class="article-grid">
+        {otherArticles.map(article => (
+          <ArticleCard
+            title={article.title}
+            excerpt={article.excerpt}
+            date={article.date}
+            category={article.category}
+            image={article.image}
+            imageAlt={article.imageAlt}
+            slug={article.slug}
+          />
+        ))}
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+      <h2>Prenumerera på vårt nyhetsbrev</h2>
+      <p>Få de senaste nyheterna från Bollebygd direkt i din inkorg varje vecka.</p>
+      <form class="newsletter-form" action="#" method="post">
+        <input type="email" placeholder="Din e-postadress" required />
+        <button type="submit">Prenumerera</button>
+      </form>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    margin-bottom: var(--space-2xl);
+  }
+</style>

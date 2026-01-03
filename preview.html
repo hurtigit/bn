@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bollebygdsnyheter - Preview</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+
+    :root {
+      --color-primary: #1a5a3a;
+      --color-primary-dark: #0d3d26;
+      --color-primary-light: #2d7a52;
+      --color-accent: #c4a052;
+      --color-accent-light: #e8d9a8;
+      --color-bg: #fafaf8;
+      --color-bg-alt: #f0efe9;
+      --color-surface: #ffffff;
+      --color-text: #1a1a1a;
+      --color-text-muted: #5a5a5a;
+      --color-text-light: #8a8a8a;
+      --color-border: #e0dfd8;
+      --color-border-light: #eeedea;
+      --cat-nyheter: #1a5a3a;
+      --cat-sport: #b85c38;
+      --cat-kultur: #6b4c9a;
+      --cat-naringsliv: #2d6a8f;
+      --cat-kommun: #5a7a52;
+      --cat-fritid: #c4a052;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --max-width: 1200px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 2px 4px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.08);
+      --transition-fast: 150ms ease;
+      --transition-base: 250ms ease;
+      --transition-slow: 400ms ease;
+    }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-body);
+      line-height: 1.6;
+      color: var(--color-text);
+      background: var(--color-bg);
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { color: var(--color-primary-dark); }
+    img { max-width: 100%; height: auto; display: block; }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-md);
+    }
+    @media (min-width: 768px) {
+      .container { padding: 0 var(--space-xl); }
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      height: 72px;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      gap: var(--space-lg);
+    }
+    .site-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.1;
+    }
+    .logo-tagline {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Nav */
+    .main-nav { display: none; gap: var(--space-lg); }
+    @media (min-width: 768px) { .main-nav { display: flex; } }
+    .nav-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      padding: var(--space-sm) 0;
+      position: relative;
+      transition: color var(--transition-fast);
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-primary);
+      transform: scaleX(0);
+      transition: transform var(--transition-fast);
+    }
+    .nav-link:hover, .nav-link.active { color: var(--color-primary); }
+    .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+
+    /* Search */
+    .search-container { position: relative; }
+    .search-input {
+      width: 100%;
+      max-width: 280px;
+      padding: var(--space-sm) var(--space-md) var(--space-sm) 2.5rem;
+      font-size: 0.9rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-bg);
+      transition: var(--transition-fast);
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background: var(--color-surface);
+      box-shadow: 0 0 0 3px rgba(26, 90, 58, 0.1);
+    }
+    .search-icon {
+      position: absolute;
+      left: var(--space-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-light);
+    }
+
+    /* Mobile toggle */
+    .menu-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: var(--space-sm);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    @media (min-width: 768px) { .menu-toggle { display: none; } }
+    .menu-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--color-text);
+    }
+
+    /* Featured */
+    .featured-article {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background: var(--color-text);
+      aspect-ratio: 16/9;
+      display: block;
+    }
+    @media (min-width: 768px) { .featured-article { aspect-ratio: 21/9; } }
+    .featured-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-slow);
+    }
+    .featured-article:hover .featured-image { transform: scale(1.03); }
+    .featured-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
+    }
+    .featured-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-lg);
+      color: white;
+    }
+    @media (min-width: 768px) { .featured-content { padding: var(--space-2xl); max-width: 70%; } }
+    .featured-title {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: white;
+      margin-bottom: var(--space-sm);
+    }
+    .featured-article:hover .featured-title { color: var(--color-accent-light); }
+    .featured-excerpt {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: var(--space-md);
+    }
+    @media (min-width: 768px) { .featured-excerpt { font-size: 1.125rem; } }
+    .featured-meta {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    /* Category badge */
+    .category-badge {
+      display: inline-block;
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-sm);
+      background: var(--color-primary);
+      color: white;
+      margin-bottom: var(--space-sm);
+    }
+    .category-badge[data-category="nyheter"] { background: var(--cat-nyheter); }
+    .category-badge[data-category="naringsliv"] { background: var(--cat-naringsliv); }
+    .category-badge[data-category="kommun"] { background: var(--cat-kommun); }
+    .category-badge[data-category="fritid"] { background: var(--cat-fritid); }
+    .category-badge[data-category="kultur"] { background: var(--cat-kultur); }
+    .category-badge[data-category="sport"] { background: var(--cat-sport); }
+
+    /* Section header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 2px solid var(--color-text);
+    }
+    .section-title { font-size: 1.25rem; margin: 0; }
+    .section-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Article grid */
+    .article-grid {
+      display: grid;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+    @media (min-width: 640px) { .article-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .article-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .article-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition-base), transform var(--transition-base);
+    }
+    .article-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .article-card-image {
+      aspect-ratio: 16/10;
+      overflow: hidden;
+    }
+    .article-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-slow);
+    }
+    .article-card:hover .article-card-image img { transform: scale(1.05); }
+    .article-card-content { padding: var(--space-lg); }
+    .article-card-title {
+      font-size: 1.125rem;
+      margin: var(--space-sm) 0;
+    }
+    .article-card-title a { color: var(--color-text); }
+    .article-card-title a:hover { color: var(--color-primary); }
+    .article-card-excerpt {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+    }
+    .article-card-meta {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+    }
+
+    /* Newsletter */
+    .newsletter {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl);
+      text-align: center;
+      color: white;
+      margin: var(--space-2xl) 0;
+    }
+    .newsletter h2 { color: white; margin-bottom: var(--space-sm); }
+    .newsletter p { opacity: 0.9; margin-bottom: var(--space-lg); }
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    @media (min-width: 480px) { .newsletter-form { flex-direction: row; } }
+    .newsletter-form input {
+      flex: 1;
+      padding: var(--space-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+    }
+    .newsletter-form button {
+      padding: var(--space-md) var(--space-xl);
+      background: white;
+      color: var(--color-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .newsletter-form button:hover { background: var(--color-accent-light); }
+
+    /* Footer */
+    .site-footer {
+      background: var(--color-text);
+      color: rgba(255,255,255,0.7);
+      padding: var(--space-2xl) 0 var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+    .footer-grid {
+      display: grid;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+    @media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
+    .footer-brand p { max-width: 300px; line-height: 1.6; margin-top: var(--space-md); }
+    .footer-nav h3, .footer-contact h3 {
+      color: white;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-md);
+    }
+    .footer-nav ul { list-style: none; }
+    .footer-nav li { margin-bottom: var(--space-sm); }
+    .footer-nav a { color: rgba(255,255,255,0.7); }
+    .footer-nav a:hover { color: white; }
+    .footer-contact p { margin-bottom: var(--space-sm); }
+    .footer-bottom {
+      padding-top: var(--space-xl);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#" class="site-logo">
+        <div class="logo-mark">B</div>
+        <div class="logo-text">
+          <span class="logo-title">Bollebygdsnyheter</span>
+          <span class="logo-tagline">Lokala nyheter sedan 1986</span>
+        </div>
+      </a>
+      
+      <nav class="main-nav">
+        <a href="#" class="nav-link active">Hem</a>
+        <a href="#" class="nav-link">Arkiv</a>
+        <a href="#" class="nav-link">Sport</a>
+        <a href="#" class="nav-link">Kultur</a>
+        <a href="#" class="nav-link">Om oss</a>
+      </nav>
+      
+      <div class="search-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="search" class="search-input" placeholder="Sök artiklar...">
+      </div>
+      
+      <button class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <div class="container" style="padding-top: var(--space-xl);">
+      
+      <!-- Featured Article -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <a href="#" class="featured-article">
+          <img 
+            src="https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=1200&h=600&fit=crop" 
+            alt="Storm"
+            class="featured-image"
+          />
+          <div class="featured-overlay"></div>
+          <div class="featured-content">
+            <span class="category-badge" data-category="nyheter">Nyheter</span>
+            <h2 class="featured-title">Kommunen röjer upp efter stormen Amy</h2>
+            <p class="featured-excerpt">
+              Efter att stormen Amy dragit förbi arbetar Bollebygds kommun intensivt med att röja upp. 
+              De flesta vägar och gång- och cykelbanor är redan framkomliga.
+            </p>
+            <div class="featured-meta">
+              <time>6 oktober 2025</time> • Redaktionen
+            </div>
+          </div>
+        </a>
+      </section>
+
+      <!-- Latest Articles -->
+      <section>
+        <div class="section-header">
+          <h2 class="section-title">Senaste nyheterna</h2>
+          <a href="#" class="section-link">
+            Visa alla
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        </div>
+        
+        <div class="article-grid">
+          <!-- Article 1 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="naringsliv">Näringsliv</span>
+              <h3 class="article-card-title">
+                <a href="#">Bollebygd klättrar 64 platser i företagsklimatrankingen</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Kommunen går från plats 207 till 143 i Svenskt Näringslivs rankning av företagsklimatet 2025.
+              </p>
+              <div class="article-card-meta">8 oktober 2025</div>
+            </div>
+          </article>
+
+          <!-- Article 2 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="kommun">Kommun</span>
+              <h3 class="article-card-title">
+                <a href="#">90-talsmeny firar kommunens 30-årsjubileum</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Under vecka 41 blir det nostalgi i matsalen för alla barn och ungdomar i förskola och skola.
+              </p>
+              <div class="article-card-meta">2 oktober 2025</div>
+            </div>
+          </article>
+
+          <!-- Article 3 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="fritid">Fritid</span>
+              <h3 class="article-card-title">
+                <a href="#">Belysningen på Rinna motionsspår är igång</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Nu kan du springa och gå säkert även när mörkret faller.
+              </p>
+              <div class="article-card-meta">25 september 2025</div>
+            </div>
+          </article>
+
+          <!-- Article 4 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="kultur">Kultur</span>
+              <h3 class="article-card-title">
+                <a href="#">Biblioteken prisas för sitt kulturarbete</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Biblioteken i Bollebygd hyllas som viktiga mötesplatser för kommunens invånare.
+              </p>
+              <div class="article-card-meta">20 september 2025</div>
+            </div>
+          </article>
+
+          <!-- Article 5 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1590760475226-9c3644485e86?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="nyheter">Nyheter</span>
+              <h3 class="article-card-title">
+                <a href="#">Vildsvin söker sig in i tätorten</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Bollebygds kommun arbetar med att hantera den ökande vildsvinspopulationen.
+              </p>
+              <div class="article-card-meta">18 september 2025</div>
+            </div>
+          </article>
+
+          <!-- Article 6 -->
+          <article class="article-card">
+            <a href="#">
+              <div class="article-card-image">
+                <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop" alt="">
+              </div>
+            </a>
+            <div class="article-card-content">
+              <span class="category-badge" data-category="nyheter">Nyheter</span>
+              <h3 class="article-card-title">
+                <a href="#">Ny gruppbostad invigd på Sockelvägen</a>
+              </h3>
+              <p class="article-card-excerpt">
+                Invigningen markerar en viktig satsning på vård och omsorg på hemmaplan.
+              </p>
+              <div class="article-card-meta">15 september 2025</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section class="newsletter">
+        <h2>Prenumerera på vårt nyhetsbrev</h2>
+        <p>Få de senaste nyheterna från Bollebygd direkt i din inkorg varje vecka.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Din e-postadress">
+          <button type="submit">Prenumerera</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo-mark">B</div>
+          <p>Din källa för lokala nyheter från Bollebygd sedan 1986. Vi rapporterar om det som händer i vår kommun.</p>
+        </div>
+        
+        <nav class="footer-nav">
+          <h3>Kategorier</h3>
+          <ul>
+            <li><a href="#">Nyheter</a></li>
+            <li><a href="#">Sport</a></li>
+            <li><a href="#">Kultur</a></li>
+            <li><a href="#">Näringsliv</a></li>
+          </ul>
+        </nav>
+        
+        <div class="footer-contact">
+          <h3>Kontakt</h3>
+          <p>Redaktionen</p>
+          <p>redaktion@bollebygdsnyheter.se</p>
+          <p>Bollebygd</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Bollebygdsnyheter. Alla rättigheter förbehållna.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

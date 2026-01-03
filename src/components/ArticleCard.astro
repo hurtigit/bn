@@ -1,0 +1,58 @@
+---
+interface Props {
+  title: string;
+  excerpt?: string;
+  date: string;
+  category?: string;
+  image?: string;
+  imageAlt?: string;
+  slug: string;
+}
+
+const { title, excerpt, date, category, image, imageAlt, slug } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  'nyheter': 'Nyheter',
+  'sport': 'Sport',
+  'kultur': 'Kultur',
+  'naringsliv': 'Näringsliv',
+  'kommun': 'Kommun',
+  'fritid': 'Fritid',
+  'omsorg': 'Omsorg',
+  'opinion': 'Opinion',
+};
+
+const formattedDate = new Date(date).toLocaleDateString('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+const defaultImage = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop';
+---
+
+<article class="article-card">
+  <a href={`/bollebygdsnyheter/artikel/${slug}/`}>
+    <div class="article-card-image">
+      <img 
+        src={image || defaultImage} 
+        alt={imageAlt || title}
+        loading="lazy"
+      />
+    </div>
+  </a>
+  <div class="article-card-content">
+    {category && (
+      <span class="category-badge" data-category={category}>
+        {categoryLabels[category] || category}
+      </span>
+    )}
+    <h3 class="article-card-title">
+      <a href={`/bollebygdsnyheter/artikel/${slug}/`}>{title}</a>
+    </h3>
+    {excerpt && <p class="article-card-excerpt">{excerpt}</p>}
+    <div class="article-card-meta">
+      <time datetime={date}>{formattedDate}</time>
+    </div>
+  </div>
+</article>

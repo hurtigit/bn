@@ -1,0 +1,183 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Lokala nyheter från Bollebygd sedan 1986" } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  <title>{title} | Bollebygdsnyheter</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/bollebygdsnyheter/favicon.svg">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/bollebygdsnyheter/styles/global.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/bollebygdsnyheter/" class="site-logo">
+        <div class="logo-mark">B</div>
+        <div class="logo-text">
+          <span class="logo-title">Bollebygdsnyheter</span>
+          <span class="logo-tagline">Lokala nyheter sedan 1986</span>
+        </div>
+      </a>
+      
+      <nav class="main-nav">
+        <a href="/bollebygdsnyheter/" class:list={["nav-link", { active: currentPath === "/bollebygdsnyheter/" }]}>Hem</a>
+        <a href="/bollebygdsnyheter/arkiv/" class:list={["nav-link", { active: currentPath.includes("/arkiv") }]}>Arkiv</a>
+        <a href="/bollebygdsnyheter/kategori/sport/" class:list={["nav-link", { active: currentPath.includes("/sport") }]}>Sport</a>
+        <a href="/bollebygdsnyheter/kategori/kultur/" class:list={["nav-link", { active: currentPath.includes("/kultur") }]}>Kultur</a>
+        <a href="/bollebygdsnyheter/om-oss/" class:list={["nav-link", { active: currentPath.includes("/om-oss") }]}>Om oss</a>
+      </nav>
+      
+      <!-- Search -->
+      <div class="search-container" id="search-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="search" 
+          class="search-input" 
+          placeholder="Sök artiklar..."
+          id="search-input"
+          autocomplete="off"
+        >
+        <div class="search-results" id="search-results" style="display: none;"></div>
+      </div>
+      
+      <button class="menu-toggle" id="menu-toggle" aria-label="Öppna meny">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <nav class="mobile-nav" id="mobile-nav">
+      <a href="/bollebygdsnyheter/" class="nav-link">Hem</a>
+      <a href="/bollebygdsnyheter/arkiv/" class="nav-link">Arkiv</a>
+      <a href="/bollebygdsnyheter/kategori/sport/" class="nav-link">Sport</a>
+      <a href="/bollebygdsnyheter/kategori/kultur/" class="nav-link">Kultur</a>
+      <a href="/bollebygdsnyheter/om-oss/" class="nav-link">Om oss</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo-mark">B</div>
+          <p>Din källa för lokala nyheter från Bollebygd sedan 1986. Vi rapporterar om det som händer i vår kommun.</p>
+        </div>
+        
+        <nav class="footer-nav">
+          <h3>Kategorier</h3>
+          <ul>
+            <li><a href="/bollebygdsnyheter/kategori/nyheter/">Nyheter</a></li>
+            <li><a href="/bollebygdsnyheter/kategori/sport/">Sport</a></li>
+            <li><a href="/bollebygdsnyheter/kategori/kultur/">Kultur</a></li>
+            <li><a href="/bollebygdsnyheter/kategori/naringsliv/">Näringsliv</a></li>
+          </ul>
+        </nav>
+        
+        <div class="footer-contact">
+          <h3>Kontakt</h3>
+          <p>Redaktionen</p>
+          <p>redaktion@bollebygdsnyheter.se</p>
+          <p>Bollebygd</p>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; {new Date().getFullYear()} Bollebygdsnyheter. Alla rättigheter förbehållna.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    
+    menuToggle?.addEventListener('click', () => {
+      mobileNav?.classList.toggle('open');
+    });
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchResults = document.getElementById('search-results');
+    let articles: any[] = [];
+    
+    // Load articles for search
+    async function loadArticles() {
+      try {
+        const response = await fetch('/bollebygdsnyheter/search-index.json');
+        articles = await response.json();
+      } catch (e) {
+        console.log('Search index not available');
+      }
+    }
+    
+    loadArticles();
+    
+    searchInput?.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+      
+      if (query.length < 2) {
+        if (searchResults) searchResults.style.display = 'none';
+        return;
+      }
+      
+      const results = articles.filter(article => 
+        article.title.toLowerCase().includes(query) ||
+        article.excerpt?.toLowerCase().includes(query) ||
+        article.category?.toLowerCase().includes(query)
+      ).slice(0, 5);
+      
+      if (results.length > 0 && searchResults) {
+        searchResults.innerHTML = results.map(article => `
+          <a href="${article.url}" class="search-result-item">
+            <div class="search-result-title">${article.title}</div>
+            <div class="search-result-excerpt">${article.excerpt || ''}</div>
+          </a>
+        `).join('');
+        searchResults.style.display = 'block';
+      } else if (searchResults) {
+        searchResults.innerHTML = '<div class="search-no-results">Inga artiklar hittades</div>';
+        searchResults.style.display = 'block';
+      }
+    });
+    
+    // Close search on click outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('#search-container') && searchResults) {
+        searchResults.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

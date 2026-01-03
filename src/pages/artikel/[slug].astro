@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// Get all article files
+const articleFiles = import.meta.glob('../../content/articles/*.md', { eager: true });
+
+// Generate static paths for all articles
+export async function getStaticPaths() {
+  const articleFiles = import.meta.glob('../../content/articles/*.md', { eager: true });
+  
+  return Object.entries(articleFiles).map(([path, article]: [string, any]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') || '';
+    return {
+      params: { slug },
+      props: { article: article.frontmatter, Content: article.default, slug }
+    };
+  });
+}
+
+const { article, Content, slug } = Astro.props;
+
+const categoryLabels: Record<string, string> = {
+  'nyheter': 'Nyheter',
+  'sport': 'Sport',
+  'kultur': 'Kultur',
+  'naringsliv': 'Näringsliv',
+  'kommun': 'Kommun',
+  'fritid': 'Fritid',
+  'omsorg': 'Omsorg',
+  'opinion': 'Opinion',
+};
+
+const formattedDate = new Date(article.date).toLocaleDateString('sv-SE', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+// Get related articles (same category, excluding current)
+const allArticles = Object.entries(articleFiles).map(([path, a]: [string, any]) => ({
+  ...a.frontmatter,
+  slug: path.split('/').pop()?.replace('.md', '') || ''
+})).filter(a => a.slug !== slug);
+
+const relatedArticles = allArticles
+  .filter(a => a.category === article.category)
+  .slice(0, 3);
+---
+
+<BaseLayout title={article.title} description={article.excerpt}>
+  <article>
+    <div class="container">
+      <header class="article-header">
+        {article.category && (
+          <span class="category-badge" data-category={article.category}>
+            {categoryLabels[article.category] || article.category}
+          </span>
+        )}
+        <h1>{article.title}</h1>
+        <div class="article-meta">
+          <time datetime={article.date}>{formattedDate}</time>
+          {article.author && <span>• {article.author}</span>}
+        </div>
+      </header>
+      
+      {article.image && (
+        <div class="article-hero-image">
+          <img src={article.image} alt={article.imageAlt || article.title} />
+        </div>
+      )}
+      
+      <div class="article-content">
+        <Content />
+      </div>
+    </div>
+  </article>
+  
+  <!-- Related Articles -->
+  {relatedArticles.length > 0 && (
+    <section class="related-articles">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Relaterade artiklar</h2>
+        </div>
+        <div class="article-grid">
+          {relatedArticles.map(related => (
+            <article class="article-card">
+              <a href={`/bollebygdsnyheter/artikel/${related.slug}/`}>
+                <div class="article-card-image">
+                  <img 
+                    src={related.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop'} 
+                    alt={related.imageAlt || related.title}
+                    loading="lazy"
+                  />
+                </div>
+              </a>
+              <div class="article-card-content">
+                <h3 class="article-card-title">
+                  <a href={`/bollebygdsnyheter/artikel/${related.slug}/`}>{related.title}</a>
+                </h3>
+                <p class="article-card-excerpt">{related.excerpt}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .related-articles {
+    padding: var(--space-2xl) 0;
+    background: var(--color-bg-alt);
+    margin-top: var(--space-2xl);
+  }
+</style>

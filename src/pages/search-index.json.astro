@@ -1,0 +1,16 @@
+---
+// This file generates the search index JSON
+const articleFiles = import.meta.glob('../content/articles/*.md', { eager: true });
+
+const articles = Object.entries(articleFiles).map(([path, article]: [string, any]) => {
+  const slug = path.split('/').pop()?.replace('.md', '') || '';
+  return {
+    title: article.frontmatter.title,
+    excerpt: article.frontmatter.excerpt || '',
+    category: article.frontmatter.category || '',
+    date: article.frontmatter.date,
+    url: `/bollebygdsnyheter/artikel/${slug}/`
+  };
+}).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+---
+<Fragment set:html={JSON.stringify(articles)} />
