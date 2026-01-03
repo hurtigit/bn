@@ -5,7 +5,7 @@
   "description": "Lokala nyheter från Bollebygd - statisk sajt med Tina CMS",
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "tinacms build && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
     "tina": "tinacms dev"
