@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const base = import.meta.env.BASE_URL;
+
 // Get all articles
 const articleFiles = import.meta.glob('../content/articles/*.md', { eager: true });
 
@@ -74,7 +76,7 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', 
       {articles.map(article => (
         <article class="article-list-item" data-category={article.category} data-title={article.title.toLowerCase()} data-excerpt={(article.excerpt || '').toLowerCase()}>
           {article.image && (
-            <a href={`/artikel/${article.slug}/`} class="article-list-image">
+            <a href={`${base}/artikel/${article.slug}/`} class="article-list-image">
               <img src={article.image} alt={article.imageAlt || article.title} loading="lazy" />
             </a>
           )}
@@ -85,7 +87,7 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', 
               </span>
             )}
             <h3 class="article-card-title">
-              <a href={`/artikel/${article.slug}/`}>{article.title}</a>
+              <a href={`${base}/artikel/${article.slug}/`}>{article.title}</a>
             </h3>
             {article.excerpt && (
               <p class="article-card-excerpt">{article.excerpt}</p>

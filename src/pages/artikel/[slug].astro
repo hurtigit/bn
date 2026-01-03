@@ -18,6 +18,7 @@ export async function getStaticPaths() {
 }
 
 const { article, Content, slug } = Astro.props;
+const base = import.meta.env.BASE_URL;
 
 const categoryLabels: Record<string, string> = {
   'nyheter': 'Nyheter',
@@ -85,7 +86,7 @@ const relatedArticles = allArticles
         <div class="article-grid">
           {relatedArticles.map(related => (
             <article class="article-card">
-              <a href={`/artikel/${related.slug}/`}>
+              <a href={`${base}/artikel/${related.slug}/`}>
                 <div class="article-card-image">
                   <img
                     src={related.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop'}
@@ -96,7 +97,7 @@ const relatedArticles = allArticles
               </a>
               <div class="article-card-content">
                 <h3 class="article-card-title">
-                  <a href={`/artikel/${related.slug}/`}>{related.title}</a>
+                  <a href={`${base}/artikel/${related.slug}/`}>{related.title}</a>
                 </h3>
                 <p class="article-card-excerpt">{related.excerpt}</p>
               </div>

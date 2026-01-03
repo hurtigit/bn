@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -21,18 +23,15 @@ const base = import.meta.env.BASE_URL;
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`}>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href={`${base}/styles/global.css`}>
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="/" class="site-logo">
+      <a href={`${base}/`} class="site-logo">
         <div class="logo-mark">B</div>
         <div class="logo-text">
           <span class="logo-title">Bollebygdsnyheter</span>
@@ -41,11 +40,11 @@ const base = import.meta.env.BASE_URL;
       </a>
 
       <nav class="main-nav">
-        <a href="/" class:list={["nav-link", { active: currentPath === "/" || currentPath === "/bn/" }]}>Hem</a>
-        <a href="/arkiv/" class:list={["nav-link", { active: currentPath.includes("/arkiv") }]}>Arkiv</a>
-        <a href="/kategori/sport/" class:list={["nav-link", { active: currentPath.includes("/sport") }]}>Sport</a>
-        <a href="/kategori/kultur/" class:list={["nav-link", { active: currentPath.includes("/kultur") }]}>Kultur</a>
-        <a href="/om-oss/" class:list={["nav-link", { active: currentPath.includes("/om-oss") }]}>Om oss</a>
+        <a href={`${base}/`} class:list={["nav-link", { active: currentPath === "/" || currentPath === "/bn/" }]}>Hem</a>
+        <a href={`${base}/arkiv/`} class:list={["nav-link", { active: currentPath.includes("/arkiv") }]}>Arkiv</a>
+        <a href={`${base}/kategori/sport/`} class:list={["nav-link", { active: currentPath.includes("/sport") }]}>Sport</a>
+        <a href={`${base}/kategori/kultur/`} class:list={["nav-link", { active: currentPath.includes("/kultur") }]}>Kultur</a>
+        <a href={`${base}/om-oss/`} class:list={["nav-link", { active: currentPath.includes("/om-oss") }]}>Om oss</a>
       </nav>
       
       <!-- Search -->
@@ -72,11 +71,11 @@ const base = import.meta.env.BASE_URL;
     </div>
     
     <nav class="mobile-nav" id="mobile-nav">
-      <a href="/" class="nav-link">Hem</a>
-      <a href="/arkiv/" class="nav-link">Arkiv</a>
-      <a href="/kategori/sport/" class="nav-link">Sport</a>
-      <a href="/kategori/kultur/" class="nav-link">Kultur</a>
-      <a href="/om-oss/" class="nav-link">Om oss</a>
+      <a href={`${base}/`} class="nav-link">Hem</a>
+      <a href={`${base}/arkiv/`} class="nav-link">Arkiv</a>
+      <a href={`${base}/kategori/sport/`} class="nav-link">Sport</a>
+      <a href={`${base}/kategori/kultur/`} class="nav-link">Kultur</a>
+      <a href={`${base}/om-oss/`} class="nav-link">Om oss</a>
     </nav>
   </header>
 
@@ -97,10 +96,10 @@ const base = import.meta.env.BASE_URL;
         <nav class="footer-nav">
           <h3>Kategorier</h3>
           <ul>
-            <li><a href="/kategori/nyheter/">Nyheter</a></li>
-            <li><a href="/kategori/sport/">Sport</a></li>
-            <li><a href="/kategori/kultur/">Kultur</a></li>
-            <li><a href="/kategori/naringsliv/">Näringsliv</a></li>
+            <li><a href={`${base}/kategori/nyheter/`}>Nyheter</a></li>
+            <li><a href={`${base}/kategori/sport/`}>Sport</a></li>
+            <li><a href={`${base}/kategori/kultur/`}>Kultur</a></li>
+            <li><a href={`${base}/kategori/naringsliv/`}>Näringsliv</a></li>
           </ul>
         </nav>
         
