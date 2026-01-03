@@ -4,7 +4,7 @@ excerpt: "Bollebygds kommun arbetar med att hantera den ökande vildsvinspopulat
 date: 2025-09-18
 author: "Redaktionen"
 category: "nyheter"
-image: "https://images.unsplash.com/photo-1590760475226-9c3644485e86?w=800&h=500&fit=crop"
+image: "https://images.unsplash.com/photo-1612528443702-f6741f70a049?w=800&h=500&fit=crop"
 imageAlt: "Vildsvin i skogsmiljö"
 featured: false
 ---
