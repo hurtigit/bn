@@ -111,52 +111,55 @@ const formatDate = (date: string) => new Date(date).toLocaleDateString('sv-SE', 
   // Filter functionality
   const filterBtns = document.querySelectorAll('.filter-btn');
   const articleItems = document.querySelectorAll('.article-list-item');
-  const searchInput = document.getElementById('archive-search') as HTMLInputElement;
+  const searchInput = document.getElementById('archive-search');
   const noResults = document.getElementById('no-results');
-  
+
   let currentCategory = 'all';
   let currentSearch = '';
-  
+
   function filterArticles() {
     let visibleCount = 0;
-    
-    articleItems.forEach(item => {
-      const el = item as HTMLElement;
-      const category = el.dataset.category || '';
-      const title = el.dataset.title || '';
-      const excerpt = el.dataset.excerpt || '';
-      
+
+    articleItems.forEach(function(item) {
+      const category = item.dataset.category || '';
+      const title = item.dataset.title || '';
+      const excerpt = item.dataset.excerpt || '';
+
       const matchesCategory = currentCategory === 'all' || category === currentCategory;
-      const matchesSearch = currentSearch === '' || 
-        title.includes(currentSearch) || 
+      const matchesSearch = currentSearch === '' ||
+        title.includes(currentSearch) ||
         excerpt.includes(currentSearch);
-      
+
       if (matchesCategory && matchesSearch) {
-        el.style.display = '';
+        item.style.display = '';
         visibleCount++;
       } else {
-        el.style.display = 'none';
+        item.style.display = 'none';
       }
     });
-    
+
     if (noResults) {
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
   }
-  
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
+
+  filterBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(function(b) {
+        b.classList.remove('active');
+      });
       btn.classList.add('active');
-      currentCategory = (btn as HTMLElement).dataset.category || 'all';
+      currentCategory = btn.dataset.category || 'all';
       filterArticles();
     });
   });
-  
-  searchInput?.addEventListener('input', (e) => {
-    currentSearch = (e.target as HTMLInputElement).value.toLowerCase().trim();
-    filterArticles();
-  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+      currentSearch = e.target.value.toLowerCase().trim();
+      filterArticles();
+    });
+  }
 </script>
 
 <style>
